@@ -1,0 +1,30 @@
+# The following models corresponds to the model in lme4 specified by
+# pitch ~ base + attract + (attract|Participant)
+
+model {
+
+	for (i in 1:N) {
+		pitch[i] ~ dnorm(beta.base * base[i] 
+				 + beta.attract[participant[i]] * attract[i] 
+                                 + alpha[participant[i]], 
+				 tau)
+	}
+
+	for (j in 1:J) {
+		alpha[j] ~ dnorm(alpha.0, tau.alpha.0)
+		beta.attract[j] ~ dnorm(beta.attract.0, tau.beta.attract.0)
+	}
+
+	beta.base ~ dnorm(0, 1.0E-3)
+	beta.attract.0 ~ dnorm(0, 1.0E-3)
+	alpha.0 ~ dnorm(0, 1.0E-3)
+
+	tau ~ dunif(0.0e-3, 1.0e+3)
+	tau.alpha.0 ~ dunif(0.0e-3, 1.0e+3)
+	tau.beta.attract.0 ~ dunif(0.0e-3, 1.0e+3)
+
+	sigma <- sqrt(1/tau)
+	sigma.alpha.0 <- sqrt(1/tau.alpha.0)
+	sigma.beta.attract.0 <- sqrt(1/tau.beta.attract.0)
+
+}
