@@ -1,0 +1,28 @@
+model {
+
+	for (i in 1:N) {
+
+		y[i] ~ dnorm(mu[i], tau)
+		
+		mu[i] <- inprod(w, phi[i,])
+
+		for (k in 1:K) {
+			phi[i, k] <- exp(- (x[i]-centers[k])^2/width^2)
+		}
+
+	}
+	
+	for (k in 1:K) {
+		w[k] ~ dnorm(0.0, w.tau)
+	}
+
+	tau ~ dunif(1.0e-3, 1.0e3)
+	w.tau ~ dunif(1.0e-3, 1.0e3)
+
+	width ~ dunif(0.01, 10000) 
+
+	sigma <- sqrt(1/tau)
+	ranef.sigma <- sqrt(1/tau)
+	w.sigma <- sqrt(1/w.tau)
+
+}
