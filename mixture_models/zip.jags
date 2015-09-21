@@ -1,0 +1,19 @@
+model {
+
+	for (i in 1:N) {
+
+
+		z[i] ~ dbern(beta)
+
+		lambda[i] <- (1-z[i]) * lambda.null + z[i] * lambda.nonnull
+
+		y[i] ~ dpois(lambda[i])
+
+	}
+
+	beta ~ dbeta(1.0, 1.0)
+	lambda.nonnull ~ dunif(1.0e-5, 100.0)
+
+	lambda.null <- 1.0e-5
+
+}

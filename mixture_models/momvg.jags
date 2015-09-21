@@ -1,0 +1,30 @@
+model {
+
+	for (i in 1:N) {
+		x[i] ~ dcat(vpi)
+		y[i,] ~ dmnorm(mu[x[i],], Omega[x[i],,])
+	}
+
+
+	for (k in 1:K) {
+		alpha[k] <- 1.0
+		
+		mu[k, 1] ~ dnorm(0.0, 1.0E-3)
+		mu[k, 2] ~ dnorm(0.0, 1.0E-3)
+
+		# Covariance matrices
+		sigma[k, 1] ~ dunif(1.0e-3, 10.0)
+		sigma[k, 2] ~ dunif(1.0e-3, 10.0)
+		
+		rho[k] ~ dunif(-1, 1)
+
+		Sigma[k, 1, 1] <- sigma[k, 1] * sigma[k, 1]
+		Sigma[k, 1, 2] <- sigma[k, 1] * sigma[k, 2] * rho[k]
+		Sigma[k, 2, 1] <- sigma[k, 1] * sigma[k, 2] * rho[k]
+		Sigma[k, 2, 2] <- sigma[k, 2] * sigma[k, 2]
+
+		Omega[k, 1:K, 1:K] <- inverse(Sigma[k,,])
+	}
+
+	vpi ~ ddirich(alpha)
+}
