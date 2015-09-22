@@ -1,0 +1,38 @@
+model {
+
+	for (i in 1:N) {
+		x[i] ~ dcat(p[1:N])
+		y[i] ~ dnorm(mu[x[i]], tau[x[i]])
+	}
+
+
+	################################
+	# Priors for Gaussian components
+	################################
+	for (k in 1:N) {
+		mu[k] ~ dnorm(0.0, 0.01)
+		tau[k] <- 1/(sigma[k]*sigma[k])
+		sigma[k] ~ dunif(0, 10)
+	}
+
+	#######################
+	# Stick breaking prior.
+	#######################
+
+	for (k in 1:(N-1)) {
+	    v[k] ~ dbeta(1, alpha)
+	}
+	
+	p[1] <- v[1] 
+	for (k in 2:(N-1)) {
+		p[k] <- v[k] * (1-v[k-1]) * p[k-1]/v[k-1]
+	}
+
+	p.sum <- sum(p[1:(N-1)])
+	p[N] <- 1-p.sum
+
+	#######################
+
+	alpha ~ dunif(0.3, 7)
+
+}
