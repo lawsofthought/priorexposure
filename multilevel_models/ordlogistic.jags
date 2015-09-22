@@ -1,0 +1,82 @@
+#################################################################
+# A multivariate ordinal logistic regression 
+# Varying intercept, non-varying slope.
+# Given J slopes, we expect many to be zero.
+# Rather than use a hypothesis test, and so
+# contend with the spectre of multiple inferences.
+# We will introduce a binary latent variable, which is
+# multiplied by the slope, and then infer the probability that this
+# takes the value of zero or one.
+#
+# subjects: i in 1 ... n
+# items: j in 1...J 
+# responses: k in {1,2,3} 
+# predictor variables x[i], z[i] for (i in 1:n) 
+# x: ~ N(x.mu,x.tau^-1)
+#################################################################
+
+
+
+
+model {
+for (i in 1:n) {
+	for (j in 1:J) {
+
+			# ordinal logits
+			psi[i,j,1] <- alpha[j] + gamma[j]*z[i] + lmbda[j]*beta[j]*x[i]
+			psi[i,j,2] <- psi[i,j,1] - c.cutoff
+
+			P[i,j,1] <- ilogit(-psi[i,j,1])
+			P[i,j,2] <- ilogit(psi[i,j,1]) - ilogit(psi[i,j,2])
+			P[i,j,3] <- ilogit(psi[i,j,2])
+
+			y[i,j,1:K] ~ dmulti(P[i,j,1:K], 1)
+		
+		}
+	}
+
+	# probability model for predictor variable x
+	for (i in 1:n) { 
+		x[i] ~ dnorm(x.mu,x.tau)	
+	}
+
+
+	# probability model for predictor variable z
+	for (i in 1:n) { 
+		z.p[i] ~ dbeta(1, 1)
+		z[i] ~ dbern(z.p[i])
+	}
+
+	for (j in 1:J) {
+			beta[j] ~ dnorm(mu.beta,tau.beta)
+			lmbda[j] ~ dbern(lmbda.p)
+			alpha[j] ~ dnorm(mu.alpha,tau.alpha)
+			gamma[j] ~ dnorm(mu.gamma,tau.gamma)
+	}
+
+		lmbda.p ~ dbeta(.5,.5)
+
+		c.cutoff ~ dunif(0,100)
+		
+		mu.beta ~ dnorm(0,.0001)
+		mu.alpha ~ dnorm(0,.0001)
+		mu.gamma ~ dnorm(0,.0001)
+#	
+		tau.alpha ~ dgamma(1.0E-3,1.0E-3)
+		tau.beta ~ dgamma(1.0E-3,1.0E-3)
+		tau.gamma ~ dgamma(1.0E-3,1.0E-3)
+
+		x.mu ~ dnorm(0,.0001)
+		x.tau ~ dgamma(1.0E-3,1.0E-3)
+
+		# derivative variables
+		psi.subject <- m[1,1:J] # mean, subject 1, all items
+		psi.item <- m[1:n,1] # mean, all subjects, item 1
+
+
+		for (i in 1:n) {
+			for (j in 1:J) {
+				m[i,j] <- 0*P[i,j,1] + 1*P[i,j,2] + 2*P[i,j,3]	 # expected value of response of subject i to item j
+			}
+		}
+}
