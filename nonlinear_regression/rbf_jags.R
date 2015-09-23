@@ -46,13 +46,17 @@ f <- as.vector(w %*% basisfunctions.output)
 
 y <- f + rnorm(N, mean=0, sd=sigma)
 
+plot(x, f, type='l')
+points(x, y)
+
+
 M <- jags.model('rbf.jags', 
                 data=list('x'=x, 'y'=y, 'centers'=centers, 'N'=N, 'K'=K),
                 n.chains = 3)
 
-update(M, 100000)
+update(M, 10000)
 
-S <- coda.samples(M, variable.names = c('width', 'sigma', 'w.tau'), n.iter = 100000)
+S <- coda.samples(M, variable.names = c('width', 'sigma', 'w.tau'), n.iter = 10000)
 
 S.mu <- coda.samples(M, variable.names = c('mu'), n.iter = 10000)
 q <- summary(S.mu)

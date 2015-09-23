@@ -39,7 +39,7 @@ Phi <- function(x, centers, width=1.0) {
     basisfunctions.output[k,] <- phi(x, centers[k], width)
   }
   
-  return(y)
+  return(basisfunctions.output)
   
 }
 
@@ -80,3 +80,5 @@ rbf.prior.samples <- function(x, centers, width, n.samples=5, ylims=NULL) {
     lines(x, y[i,], type='l')
   }
 }
+
+rbf.prior.samples(x, centers = centers, width = 1)

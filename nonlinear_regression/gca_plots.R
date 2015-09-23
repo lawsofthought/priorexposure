@@ -1,4 +1,4 @@
-load('Examples.Rdata')
+load('mirman_gca.Rdata')
 library(ggplot2)
 
 ggplot(FunctThemePts, 

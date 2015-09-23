@@ -6,8 +6,9 @@ y.stretch <- function(y, stretch.factor){
 }
 
 library(rjags)
+library(ggplot2)
 
-load('Examples.Rdata')
+load('mirman_gca.Rdata')
 
 df <- aggregate(meanFix ~ Time + Object, 
                 data=FunctThemePts, 
@@ -23,6 +24,10 @@ fixation <- df$meanFix
 time <- df$Time
 centers <- seq(min(time), max(time), by=100)
 K <- length(centers)
+
+df <- data.frame(x=time, y=fixation, condition=factor(condition))
+ggplot(df, aes(x=x, y=y, linetype=condition)) + geom_line()
+
 
 M <- jags.model('gca_rbf.2.jags', 
                 data=list('x'=time, 

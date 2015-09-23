@@ -1,5 +1,5 @@
 library(rjags)
-load('Examples.Rdata')
+load('mirman_gca.Rdata')
 
 df <- subset(FunctThemePts, Object=='Target')
 
@@ -13,7 +13,7 @@ subjects <- as.numeric(levels(subjects))[subjects]
 J <- max(subjects)
 N <- length(subjects)
 
-M <- jags.model('gca_rbf.jags', 
+M <- jags.model('gca_rbf.1.jags', 
                 data=list('x'=df$Time, 
                           'y'=df$meanFix, 
                           'centers'=centers, 

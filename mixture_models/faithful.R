@@ -1,4 +1,5 @@
 data("faithful")
+library(ellipse)
 
 N <- dim(faithful)[1]
 K <- 2

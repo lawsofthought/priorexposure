@@ -55,6 +55,6 @@ M <- jags.model(
   n.chains = 3
 )
 
-update(M, 1000)
+update(M, 10000)
 
-S <- coda.samples(M, variable.names = c('alpha'), n.iter=1000)
+S <- coda.samples(M, variable.names = c('alpha'), n.iter=10000)

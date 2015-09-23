@@ -84,7 +84,7 @@ posterior.plot <- function(df, x, mu, samples){
 }
 
 x <- seq(-10, 10, length.out=1e2)
-Sigma <- sq.exp.kernel(x, x, tau=2)
+Sigma <- sq.exp.kernel(x, x, tau=4)
 mu <- rep(0, length(x))
 samples <- f.sample(3, mu, Sigma)
 plot.samples(x, samples)
