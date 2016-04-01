@@ -1,0 +1,19 @@
+model {
+
+	for (i in 1:N) {
+
+		cheat[i] ~ dbern(p[i])
+
+		p[i] <- ilogit(alpha 
+				+ beta.sex * sex[i] 
+ 				+ beta.children * children[i]
+ 				+ beta.years * years[i])
+
+	}
+
+	alpha ~ dnorm(0, 1.0e-3)
+	beta.sex ~ dnorm(0, 1.0e-3)
+	beta.children ~ dnorm(0, 1.0e-3)
+	beta.years ~ dnorm(0, 1.0e-3)
+
+}
