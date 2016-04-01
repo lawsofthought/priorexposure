@@ -1,0 +1,21 @@
+model {
+
+	for (i in 1:N) {
+
+		y[i] ~ dbern(p[x])
+
+	}
+
+	p[1] ~ dbeta(alpha, beta)
+	p[2] <- 0.5
+
+	x ~ dcat(vpi[1:2])
+
+	vpi[1] <- lambda
+	vpi[2] <- 1-lambda
+
+	lambda ~ dbeta(1, 1)
+
+
+
+}
