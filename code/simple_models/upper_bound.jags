@@ -1,0 +1,11 @@
+model {
+
+	for (i in 1:N) {
+
+		y[i] ~ dunif(0, upper.bound)
+
+	}
+
+	upper.bound ~ dnorm(0, tau)T(0,)
+
+}
