@@ -1,0 +1,106 @@
+\documentclass{slides}
+
+\title[MCMC]{Introducing Markov Chain Monte Carlo}
+\author[Andrews]{Mark Andrews \& Thom Baguley}
+\date{Sept 23, 2015}
+
+\begin{document}
+{
+	\begin{frame}
+		\titlepage
+	\end{frame}
+}
+
+
+\begin{frame}
+	\frametitle{Posterior distributions}
+	\begin{itemize}
+
+		\item In general, given observed data $D$ and a model $\Omega$, the posterior distribution over the parameters $\theta$ of the model is
+		\[
+			\Prob{\theta\given D, \Omega}
+			= \frac{\overbrace{\Prob{D\given\theta}}^{\text{Likelihood}}\overbrace{\Prob{\theta\given\Omega}}^{\text{Prior}}}
+			{\underbrace{\int\Prob{D\given\theta}\Prob{\theta\given\Omega}\ d\theta}_{\text{Marginal likelihood}}}.
+		\]
+		where the \emph{marginal likelihood} gives the likelihood of the model given the observed data.
+
+	\item Given the posterior distribution $\Prob{\theta\given D, \Omega}$, our aim is often to characterise this distribution in terms of e.g. its mean, variance, etc. 
+	\item Likewise, we may aim to calculate \emph{posterior predictive} distributions such as 
+		\[
+			\Prob{x_{\text{new}} \given D, \Omega} = \int\Prob{x_{\text{new}}\given\theta,\Omega}\Prob{\theta\given D, \Omega}\ d\theta.
+		\]
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sampling from posterior distributions}
+	\begin{itemize}
+
+		\item In only rare situations can we determine the characteristics of the posterior distribution, or calculate posterior predictive distributions, in closed form.
+		\item However, in general, if we can draw samples from $\Prob{\theta\given D, \Omega}$ then we can approximate, e.g., the mean of the distribution by
+			\[
+				\langle\theta\rangle = \int\theta\Prob{\theta\given D, \Omega} \approx \frac{1}{N} \sum_{i=1}^N \tilde{\theta}_i,
+			\]
+		or the posterior predictive distribution by 
+		\[
+			\Prob{x_{\text{new}} \given D, \Omega} = \int\Prob{x_{\text{new}}\given\theta,\Omega}\Prob{\theta\given D, \Omega}\ d\theta
+			\approx \frac{1}{N} \sum_{i=1}^N \Prob{x_{\text{new}}\given\tilde{\theta}_i,\Omega},
+		\]
+		where \[\tilde{\theta}_1, \tilde{\theta}_2 \ldots \tilde{\theta}_N\] are samples from $\Prob{\theta\given D, \Omega}$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Rejection sampling}
+	\begin{itemize}
+		\item Rejection sampling is one of the simplest methods for sampling from posterior distributions.
+		\item Let us denote $\Prob{\theta\given D, \Omega}$ by $f(\theta)$.
+		\item First we sample from $\tilde{\theta}$ from another (simpler) distribution $g(\theta)$.
+		\item The distribution $g(\theta)$ can be any function so long as there exists a constant $M$ such that 
+			\[ M \cdot g(\theta) \geq f(\theta),\]
+			for all possible values of $\theta$.
+		\item Then draw $u \sim U(0, 1)$, a random sample from a uniform distribution between $0$ and $1$.
+		\item If\[ u \leq \frac{f(\tilde{\theta})}{M \cdot g(\tilde{\theta})}\]
+			then keep $\tilde{\theta}$. 
+		\item Continue until $N$ samples are collected.
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gibbs sampling}
+	\begin{itemize}
+		\item In a multivariate probability distribution, e.g. 
+			\[\Prob{x, y, z},\]
+			the univariate conditional distributions, e.g. $\Prob{x
+			\given y=\tilde{y}, z=\tilde{z}}$, may be
+			straightforward to sample from.
+		\item In Gibbs sampling, we set e.g. $y$ and $z$ to initial values $\tilde{y}_0$ and $\tilde{z}_0$ and then sample
+			\begin{align*}
+				&\tilde{x}_0 \sim \Prob{x \given y=\tilde{y}_0, z=\tilde{z}_0},\\
+				&\tilde{y}_1 \sim \Prob{x \given x=\tilde{x}_0, z=\tilde{z}_0},\\
+				&\tilde{z}_1 \sim \Prob{x \given x=\tilde{x}_0, y=\tilde{y}_1},
+			\end{align*}
+		and so on.
+	\item After convergence, the samples e.g. $\{\tilde{x}_N, \tilde{y}_N, \tilde{z}_N\}$ are draws from $\Prob{x, y, z}$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Metropolis Hastings}
+	\begin{itemize}	
+		\item Let us denote $\Prob{\theta\given D, \Omega}$ by $f(\theta)$.
+		\item We sample from a symmetric \emph{proposal} distribution $Q(\cdot\vert\cdot)$.
+		\item We start with an initial $\tilde{\theta}_0$, and sample 
+			\[\tilde{\theta} \sim Q(\theta\vert\tilde{\theta}_0).\]
+		\item We then accept $\tilde{\theta}$ with probability 
+			\[\alpha = \min\left(1.0, \frac{f(\tilde{\theta})}{f(\tilde{\theta}_0)}\right).\]
+		\item After convergence, the accepted samples are draws from the distribution $f(\theta)$.
+		\item For Metropolis Hastings, the distribution $f(\theta)$ need be only known up to a proportional constant.
+	\end{itemize}
+\end{frame}
+
+
+
+\end{document}

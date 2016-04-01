@@ -1,0 +1,315 @@
+\documentclass{slides}
+
+\title[Bayesian Inference]{Bayesian Inference in Normal Models}
+\author[Andrews]{Mark Andrews \& Thom Baguley}
+
+\begin{document}
+{
+	\begin{frame}
+		\titlepage
+	\end{frame}
+}
+
+
+\begin{frame}
+	\frametitle{Inference in normal distributions}
+	\begin{itemize}
+		\item The univariate normal, or Gaussian, probability distribution with mean $\mu$ and variance $\sigma^2$ has the density
+			\[
+				\Prob{x\given\mu,\sigma} = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}.
+			\]
+		\item A random variable $x$ that is normally distributed with mean $\mu$ and variance $\sigma^2$ can be written
+			\[
+				x \sim \textrm{N}(\mu, \sigma^2).
+			\]
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Inference in normal distributions}
+	\begin{itemize}
+		\item A common elementary data analysis problem is when we
+			observe $n$ iid samples from $\textrm{N}(\mu, \sigma^2)$, where
+			$\mu$ and $\sigma^2$ are unknown, and we aim to infer
+			$\mu$.
+
+		\item In other words, we observe
+			\[D = x_1, x_2 \cdots x_n,\]
+			where we assume
+			\[x_i \sim \textrm{N}(\mu, \sigma^2),\quad\text{for $i \in 1,2\cdots n$},\]
+		      where both $\mu$ and $\sigma^2$ are unknown, and we aim to infer the value of $\mu$. 
+		\item In other words, we aim to determine the posterior distribution
+		      \[
+			\Prob{\mu \given D}.
+		      \]
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Likelihood of $\mu$ and $\sigma^2$}
+	\begin{itemize}
+		\item The likelihood of $\mu$ and $\sigma^2$ given $D$ is 
+			\begin{align*}
+				\Prob{x_1, x_2 \cdots x_n \given \mu, \sigma^2} &= \prod_{i=1}^n \Prob{x_i \given \mu, \sigma^2},\\
+				&= \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x_i-\mu)^2}{2\sigma^2}},\\
+				&= \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n e^{\left(-\tfrac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i - \mu)^2\right)},\\
+				&\propto \sigma^{-n} e^{\left( -\tfrac{1}{2\sigma^2}\left[n s^2 + n(\bar{x}-\mu)^2\right] \right)},
+			\end{align*}
+			with \[
+				\bar{x} \doteq \tfrac{1}{n} \sum_{i=1}^n x_i, \quad s^2 \doteq \tfrac{1}{n} \sum_{i=1}^n (x_i - \bar{x})^2.
+			\]
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Likelihood of $\mu$ and $\sigma^2$}
+
+	\hspace*{-5mm}
+	\input{normal.likelihood}
+
+	The likelihood of $\mu$ and $\sigma$ when \[
+	D = 2.41, 5.37, 5.28, 4.89, 4.40, 4.63, 4.67, 4.52, 1.10, 3.86
+	\]
+	with $\bar{x}=4.11$ and $s=1.28$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conjugate prior for $\mu$ and $\sigma$}
+	\begin{itemize}
+		\item A common choice of conjugate prior is the normal/inverse-gamma distribution, also known as the \emph{normal $\times$ scaled inverse-$\chi^2$} distribution.
+		\item Thus, our full model is 
+			\begin{align*}
+				x_i &\sim \textrm{N}(\mu, \sigma^2), \quad\text{for $i\in 1, 2 \cdots n$},\\
+				\mu &\sim \textrm{N}(\mu_0, \sigma^2/\kappa_0),\\
+				\sigma^2 &\sim \textrm{Inv-}\chi^2(\nu_0, \sigma^2_0).
+			\end{align*}
+		\item This corresponds to the joint prior density 
+			\begin{align*}
+				\Prob{\mu,\sigma^2} &= \textrm{N-Inv-}\chi^2(\mu, \sigma^2 \given \mu_0, \kappa_0, \nu_0, \sigma^2_0),\\
+				&=\textrm{N}(\mu \given \mu_0, \sigma^2/\kappa_0) \times \textrm{Inv-}\chi^2(\sigma^2\given\nu_0, \sigma^2_0),\\
+				&\propto\sigma^{-1}(\sigma^2)^{-(\nu_0/2+1)} e^{\left(-\tfrac{1}{2\sigma^2}\left[ \nu_0\sigma^2_0 + \kappa_0(\mu_0  - \mu)^2 \right]\right)}
+			\end{align*}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The scaled inverse-$\chi^2$ distribution}
+
+	\hspace*{-5mm}
+	\input{scaled.inv.chisq}
+
+	The mean is $\tfrac{\nu}{\nu-2}\sigma^2_0$, mode is $\tfrac{\nu}{\nu+2}\sigma^2_0$.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Joint posterior on $\mu$ and $\sigma$}
+	\begin{itemize}
+		\item With the normal likelihood and normal/scaled inverse-$\chi^2$ distribution, the joint posterior is:
+			\begin{align*}
+				\Prob{\mu, \sigma^2 \given D} &\propto \Prob{D\given \mu, \sigma^2} \Prob{\mu,\sigma^2},\\
+				\begin{split}
+				&\propto\sigma^{-n} e^{\left( -\tfrac{1}{2\sigma^2}\left[n s^2 + n(\bar{x}-\mu)^2\right] \right)}\\
+				&\phantom{\propto}\times \sigma^{-1}(\sigma^2)^{-(\nu_0/2+1)} e^{\left(-\tfrac{1}{2\sigma^2}\left[ \nu_0\sigma^2_0 + \kappa_0(\mu_0  - \mu)^2 \right]\right)}
+				\end{split}\\
+				& = \textrm{N-Inv-}\chi^2(\mu, \sigma^2 \given \mu_n, \kappa_n, \nu_n, \sigma_n^2)
+			\end{align*}
+		where 
+		\begin{align*}
+			\mu_n &= \frac{\kappa_0\mu_0 + n\bar{x}}{\kappa_n},\\
+			 \kappa_n     &= \kappa_0 + n,\\
+			 \nu_n &= \nu_0 + n,\\
+			 \sigma_n^2 &= \frac{1}{\nu_n}\left( \nu_0\sigma_0^2 + ns^2 + \frac{n\kappa_0}{\kappa_0 + n}(\mu_0 - \bar{x})^2\right).
+		\end{align*}
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Marginal posterior of $\sigma^2$}
+
+	\begin{itemize}
+		\item The marginal posterior of $\sigma^2$ is obtained by integrating over $\mu$:
+			\begin{align*}
+				\Prob{\sigma^2 \given D} &= \int \Prob{\sigma^2, \mu\given D}\ d\mu,\\
+				&= \int \textrm{N-Inv-}\chi^2(\mu, \sigma^2 \given \mu_n, \kappa_n, \nu_n, \sigma_n^2) d\mu,\\
+				&\propto (\sigma^2)^{-(\nu_n/2+1)}e^{\left(-\frac{1}{2\sigma^2}[\nu_n\sigma_n^2]\right)},\\
+				&= \textrm{Inv-}\chi^2(\sigma^2\given\nu_n, \sigma^2_n)
+			\end{align*}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Marginal posterior of $\mu$}
+
+	\begin{itemize}
+		\item The marginal posterior of $\mu$ is obtained by integrating over $\sigma^2$:
+			\begin{align*}
+				\Prob{\mu \given D} &= \int \Prob{\sigma^2, \mu\given D}\ d\sigma^2,\\
+				&= \int \textrm{N-Inv-}\chi^2(\mu, \sigma^2 \given \mu_n, \kappa_n, \nu_n, \sigma_n^2) d\sigma^2,\\
+				&\propto \left[ 1 + \frac{\kappa_n}{\nu_n \sigma_n^2}\left(\mu-\mu_n\right)^2\right]^{-(\nu_n+1)/2},\\
+				&= \textrm{t}_{\nu_n}\left(\mu \given \mu_n, \sigma^2_n/\kappa_n\right).
+			\end{align*}
+		which is a (non-standard) t-distribution with $\nu_n$ degrees of freedom, location $\nu_n$ and scale $\sigma^2_n/\kappa_n$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Marginal posterior density of $\mu$}
+	\begin{itemize}
+		\item To infer the marginal probability of $\mu$, we must integrate over the \emph{nuisance} variable $\sigma^2$:
+			\begin{align*}
+				\Prob{\mu\given D} &= \int \Prob{\mu, \sigma^2 \given D}\ d\sigma^2,\\
+			\intertext{which can be done by}
+			&= \int \overbrace{\Prob{\mu\given \sigma^2, D}}^{\substack{\text{conditional}\\\text{posterior}}}
+			\underbrace{\Prob{\sigma^2\given D}}_{\substack{\text{marginal}\\\text{posterior}}}\ d\sigma^2.
+			\end{align*}
+		\item This demonstrates that the posterior distribution $\Prob{\mu\given D}$ is an infinite mixture of normal distributions.
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Marginal posterior density of $\mu$}
+	\begin{itemize}
+		\item If we fix $\sigma^2$ at any value and, using the previous prior on $\mu$, i.e. $\mu \sim \textrm{N}(\mu_0, \sigma^2/\kappa_0)$, then 
+			\begin{align*}
+				\Prob{\mu \given D, \sigma^2} &\propto \Prob{D\given\mu, \sigma}\Prob{\mu\given \mu_0, \sigma^2/\kappa_0},\\
+				&= \textrm{N}(\mu_n, \sigma^2/\kappa_n),
+			\end{align*}
+			where 
+			\[
+				\mu_n = \frac{\tfrac{\kappa_0}{\sigma^2}\mu_0 + \tfrac{n}{\sigma^2}\bar{x}}{\tfrac{\kappa_0}{\sigma^2} + \tfrac{n}{\sigma^2}},\quad
+				\sigma^2/\kappa_n = \frac{1}{\tfrac{\kappa_0}{\sigma^2} + \tfrac{n}{\sigma^2}}.
+			\]
+		\item Integrating over $\sigma^2$, when $\sigma^2$ has a scaled inverse $\chi^2$ distribution with parameters $\nu_n, \sigma^2_n$ leads to a non-standard t-distribution
+			leads to $\textrm{t}_{\nu_n}\left(\mu \given \mu_n, \sigma^2_n/\kappa_n\right)$ as before.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Posterior predictive distribution}
+	\begin{itemize}
+		\item Given our $n$ observed values
+			\[	D = 2.41, 5.37, 5.28, 4.89, 4.40, 4.63, 4.67, 4.52, 1.10, 3.86, \]
+			and our assumed probabilistic generative model, what is \emph{next} value that we predict?
+		\item In other words, what is
+			\[
+				\Prob{x_{n+1} \given D} = \int\int\Prob{x_{n+1}\given \mu, \sigma^2}\Prob{\mu, \sigma^2\given D} d\mu d\sigma^2
+			\]
+		\item This is again a t-distribution:
+			\[
+				\textrm{t}_{\nu_n}\left(\mu \given \mu_n, \left(1 + \tfrac{1}{\kappa_n}\right)\sigma^2_n\right)
+			\]
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Inferences concerning differences of normal means}
+	\begin{itemize}
+		\item Let us assume that we have observed two sets of data as follows:
+			\[x_1, x_2 \cdots x_n \iidsim N(\mu_{x}, \sigma^2), \quad y_1, y_2 \cdots y_n \iidsim N(\mu_{y}, \sigma^2).\]
+
+		\item In other words, both $x_1, x_2 \cdots x_n$ and $y_1, y_2 \cdots$ are independently and identically normally distributed, with different means $\mu_x$, $\mu_y$ but with a common variance $\sigma^2$.
+		\item In general, we know neither $\mu_x$, $\mu_y$ nor $\sigma^2$.
+		\item In such a situation, a common problem we are faced with is to infer the difference
+			\[ \mu_x - \mu_y,\]
+			given $D=\{x_1, x_2 \cdots x_n, y_1, y_2 \cdots y_n\}$, while integrating over the nuisance variable $\sigma^2$, i.e.,
+			\[
+				\Prob{\mu_x - \mu_y \given D}.
+			\]
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Posterior inference of differences of means}
+	\begin{itemize}
+		\item Inference of the differences of means is a special kind of posterior predictive inference:
+			\[
+				\int \Prob{\mu_x - \mu_y \given \mu_x, \mu_y, \sigma^2}\Prob{\mu_x, \mu_y, \sigma^2\given D} d\mu_xd\mu_yd\sigma^2.
+			\]
+		\item We can approach this problem using the methods we have used to deal with inference in the univariate normal distribution.
+		\item We begin by assuming, as before,
+			\begin{align*}
+				\Prob{\mu_x, \mu_y, \sigma^2} \propto \tfrac{1}{\sigma^2}
+				\mu_x &\sim \textrm{N}(\mu_0, \sigma^2/\kappa_0),\\
+				\mu_y &\sim \textrm{N}(\mu_0, \sigma^2/\kappa_0),\\
+				\sigma^2 &\sim \textrm{Inv-}\chi^2(\nu_0, \sigma^2_0).
+			\end{align*}
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Posterior inference of differences of means}
+	\begin{itemize}
+		\item Given that
+			\[ \Prob{\mu_x, \mu_y, \sigma^2 \given D}  = \Prob{\mu_x, \mu_y, \given \sigma^2, D} \Prob{\sigma^2 \given D}\]
+
+			\item From previous results, we see that 
+			\begin{align*}
+				\Prob{\mu_x, \mu_y, \given \sigma^2, D} &= \Prob{\mu_x \given \sigma^2, D} \Prob{\mu_y\given \sigma^2, D},\\
+								        &= N(\mu_n^x, \sigma^2/\kappa^x_n) N(\mu_n^y, \sigma^2/\kappa^y_n) 
+			\end{align*}
+			where $\mu_n^x$, $\mu_n^y$, $\kappa^x_n$ and $\kappa^y_n$ are defined analogously with previous results.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Posterior inference of differences of means}
+	\begin{itemize}
+		\item As such,
+			\begin{align*}
+				&\int \Prob{\mu_x - \mu_y \given \mu_x, \mu_y, \sigma^2}\Prob{\mu_x, \mu_y \given \sigma^2, D} d\mu_xd\mu_y\\
+				&= N(\mu_n^x - \mu_n^y, \sigma^2/\kappa^x_n + \sigma^2/\kappa^y_n).
+				\intertext{For simplicity, let's assume $\kappa_0 \doteq 0$. In that case,}
+				&= N(\bar{x}- \bar{y}, \tfrac{\sigma^2}{n} + \tfrac{\sigma^2}{m}).
+			\end{align*}
+		\item Integrating over $\sigma^2$ as before leads to 
+			\begin{align*}
+				&\int  N(\bar{x}- \bar{y}, \tfrac{\sigma^2}{n} + \tfrac{\sigma^2}{m}) \Prob{\sigma^2 \given D}\\
+				&=  \textrm{t}_{\nu_n}\left(\bar{x}-\bar{y}, \sigma^2_n\left(\tfrac{1}{n}+\tfrac{1}{m}\right)\right) 
+			\end{align*}
+			
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Posterior inference of differences of means}
+	\begin{itemize}
+		\item In the case of the non-informative prior case, i.e.,
+			\[\Prob{\mu_x, \mu_y, \sigma^2} \propto \tfrac{1}{\sigma^2},\]
+		the marginal posterior over $\mu_x - \mu_y$ is
+		\begin{align*}
+			\Prob{\mu_x-\mu_y \given D} = \textrm{t}_{\nu}\left(\bar{x}-\bar{y}, s^2\left(\tfrac{1}{n}+\tfrac{1}{m}\right)\right)
+		\end{align*}
+		where
+		\[ \nu = n + m -2,\quad s^2 = \frac{(n_x-1)s^2_x + (n_y-1)s^2_y}{n_x + n_y - 2}.\]
+	\item This is an identical distribution to the sampling distribution of the difference of the means.
+	\end{itemize}
+\end{frame}
+
+%\begin{frame}
+%	\frametitle{Bayesian linear regression}
+%	\begin{itemize}
+%		\item If our data are
+%			\[D = (y_1, x_1), (y_2, x_2) \cdots (y_n, x_n),\]
+%		where
+%		\[
+%		y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \quad \varepsilon \sim N(0, \sigma^2),
+%		\]
+%		we generally aim to infer
+%		\[
+%			\Prob{\beta_0, \beta_1 \given D}.
+%		\]
+%	\item In this problem, it is convenient to consider the non informative prior 
+%		\[\Prob{\beta_0, \beta_1, \sigma^2} \propto \tfrac{1}{\sigma^2}.\]
+%	\end{itemize}
+%\end{frame}
+%
+
+\end{document}

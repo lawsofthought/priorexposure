@@ -1,0 +1,79 @@
+\documentclass{slides}
+
+\title[MCMC]{Nonlinear regression}
+\author[Andrews]{Mark Andrews \& Thom Baguley}
+
+\begin{document}
+{
+	\begin{frame}
+		\titlepage
+	\end{frame}
+}
+
+
+\begin{frame}
+	\frametitle{Basis function regression}
+	\begin{itemize}
+	\item Given a set of $n$ observed predictor-outcome pairs $(x_1, y_1), (x_2, y_2) \ldots (x_n, y_n)$, a linear model with normally distributed errors is, for $i \in 1 \ldots n$,
+		\[
+			y_i = \alpha + \beta x_i + \epsilon_i, \quad \text{where $\epsilon_i \sim N(0, \sigma^2)$}.
+		\]
+	\item How do we model a \emph{nonlinear} relationship between $x$ and $y$?
+	\item One general solution is to use a weighted sum of $K$ \emph{basis functions} $\phi_1(x_i), \phi_2(x_i) \ldots \phi_3(x_i)$
+		and 
+		\[
+			y_i = \sum_{k=1}^K w_k \phi_k(x_i) + \epsilon_i
+		\]
+	\item Common choices of basis functions are \emph{radial-basis} functions and \emph{splines}.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Radial basis functions}
+	\begin{itemize}
+		\item A radial, or squared exponential, basis function can have the following form:
+			\[
+				\phi_k(x) = \exp\left( - \frac{\vert x - \mu_k \vert^2}{l^2} \right)
+			\]
+		\item Given a set of centers $\mu_1, \mu_2 \ldots \mu_K$, we can then model a smooth function between $x$ and $y$ with additive noise as 
+			\[
+				y \sim \sum_{k=1}^K w_k \phi_k(x) + \epsilon.
+			\]
+		\item If $\mu_1, \mu_2 \ldots \mu_K$ are known, then Bayesian inference in radial basis function regression involves inference of $w_1, w_2 \ldots w_K$, the width parameter $\l^2$ and the observation noise term $\sigma^2$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gaussian Processes}
+	\begin{itemize}
+		\item A Gaussian process can be seen as a generalization of a multivarate Gaussian to an infinite dimensional space.
+		\item It can be seen as a distribution over smooth functions, i.e. a random function.
+		\item For example, in a Gussian process over a space $X$, the covariance in the distribution between between any to points in that space is given by a positive definite \emph{kernel} function.
+		\item An example of a kernel could be 
+			\[
+				\kappa(x_i, x_j) = \exp\left( - \frac{\vert x_i - x_j \vert^2}{l^2} \right)
+			\]
+		\item The joint probability distribution over any set of points $x = x_1, x_2 \ldots x_n$ is then by a multivariate Gaussian with covariance matrix $K(x_1, x_2 \ldots x_n)$ where \[K_{ij} = \kappa(x_i, x_j).\]
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gaussian Processes regression}
+	\begin{itemize}
+		\item If $f \sim GP(m, \kappa)$ is a Gussian process, i.e. a random distribution over smooth functions, we can model a smooth function between $x$ and $y$ with additive noise as 
+			\[
+				y \sim f + \epsilon,
+			\]
+		with the prior on the mean function $m$ as $0$.
+	\item Given a set of $n$ observed predictor-outcome pairs $(\tilde{x}_1, y_1), (\tilde{x}_2, y_2) \ldots (\tilde{x}_n, y_n)$, the posterior distribution over $f$ is itself a Gaussian process 
+		\[ \Prob{f\given \tilde{x}, y} \sim GP(\tilde{m}, \tilde{\kappa}),\]
+		\item 
+			where 
+			\[\tilde{m} = K(\tilde{x}, x) ( K(\tilde{x}, x) + \sigma^2 I)^{-1} y,\]
+			and 
+			\[\tilde{\kappa} = K(\tilde{x}, \tilde{x}) - K(\tilde{x}, x) ( K(\tilde{x}, x) + \sigma^2 I)^{-1} K(x, \tilde{x}).\]
+	\end{itemize}
+\end{frame}
+
+
+\end{document}
