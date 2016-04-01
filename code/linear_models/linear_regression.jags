@@ -1,0 +1,21 @@
+model {
+
+	for (i in 1:N) {
+
+		eval[i] ~ dnorm(alpha 
+				+ beta.sex * sex[i] 
+ 				+ beta.beauty * beauty[i]
+   				+ beta.interaction * beauty[i] * sex[i],
+				tau)
+
+	}
+
+	alpha ~ dnorm(0, 1.0e-3)
+	beta.sex ~ dnorm(0, 1.0e-3)
+	beta.beauty ~ dnorm(0, 1.0e-3)
+	beta.interaction ~ dnorm(0, 1.0e-3)
+
+        tau ~ dgamma(1.0E-3, 1.0E-3)
+        sigma <- sqrt(1/tau)
+
+}
