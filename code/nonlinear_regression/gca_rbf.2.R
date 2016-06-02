@@ -28,20 +28,21 @@ K <- length(centers)
 df <- data.frame(x=time, y=fixation, condition=factor(condition))
 ggplot(df, aes(x=x, y=y, linetype=condition)) + geom_line()
 
+gca_data=list('x'=time, 
+              'y'=fixation, 
+              'centers'=centers,
+              'condition'=condition,
+              'J'=J,
+              'N'=N, 
+              'K'=K)
 
 M <- jags.model('gca_rbf.2.jags', 
-                data=list('x'=time, 
-                          'y'=fixation, 
-                          'centers'=centers,
-                          'condition'=condition,
-                          'J'=J,
-                          'N'=N, 
-                          'K'=K),
+                data=gca_data,
                 n.chains = 3)
 
 update(M, 100000)
 
-S <- coda.samples(M, variable.names = c('width', 'sigma', 'w.sigma'), n.iter = 10000)
+S.w <- coda.samples(M, variable.names = c('width', 'sigma', 'w.sigma'), n.iter = 1000000, thin=10)
 
 S <- coda.samples(M, variable.names = c('mu'), n.iter = 10000)
 Q <- summary(S)
