@@ -2,8 +2,8 @@ library(rjags)
 
 
 N <- 250
-alpha <- 1.0
-beta <- 1.0
+alpha <- 10
+beta <- 10
 
 y <- c(rep(0, N-139), rep(1, 139))
 n <- sum(y)
