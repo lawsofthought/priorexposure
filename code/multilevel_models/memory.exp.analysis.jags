@@ -1,0 +1,75 @@
+# Modeling the results of experiment "tabit", a text recognition memory experiment done in January, February 2012
+# On the i'th trial, subject subject[i] is shown word item[i] and asked if it was present in text[i].
+# We model the log odds of subject[i] responding that item[i] was present in text[i] as:
+#
+#		mu[i] <- beta.0 + a[i] + b[i]*x[i] + lmbda[item[i]]*beta.item[item[i]] 
+#
+# where beta.0 is a constant, a[i] is constant that varies by text and subject, 
+# x[i] is a binary indicator of whether or not item[i] was in text[i],
+# b[i] is the slope coefficient for the effect of whether item[i] was present in text[i]
+# beta.item[item[i]] gives the value by which the log odds changes from baseline (for text[i], subject[i], x[i]) for item[i].
+#
+# As can be seen, a[i] and b[i] are linear functions of subject identity, text identity and their interaction. 
+
+model {
+
+	for (i in 1:N) {
+		response[i] ~ dbern(p[i])
+		mu[i] <- beta.0 + a[i] + b[i]*x[i] + beta.item[item[i]] 
+
+		a[i] <- alpha.subject[subject[i]] + alpha.text[text[i]] + alpha.subject.text[subject[i],text[i]]
+		b[i] <- beta.subject[subject[i]] + beta.text[text[i]] + beta.subject.text[subject[i],text[i]]
+
+		p[i] <- ilogit(mu[i])
+		}
+
+		beta.0 ~ dnorm(0,.0001)
+		beta.present ~ dnorm(0,.0001)
+
+		for (j in 1:J) {
+			beta.subject[j] ~ dnorm(0,tau.b.subject)
+			alpha.subject[j] ~ dnorm(0,tau.subject)
+			}
+	
+		for (t in 1:T) {
+			beta.text[t] ~ dnorm(0,tau.b.text)
+			alpha.text[t] ~ dnorm(0,tau.text)
+			}
+
+
+		for (j in 1:J) {
+			for (t in 1:T) {
+				beta.subject.text[j,t] ~ dnorm(0,tau.b.subject.text)
+				alpha.subject.text[j,t] ~ dnorm(0,tau.subject.text)
+			}
+		}
+		
+		for (k in 1:K) {
+			beta.item[k] ~ dnorm(0,tau.item)
+		}
+
+		tau.b.text ~  dgamma(1.0E-3,1.0E-3)
+		tau.b.subject ~  dgamma(1.0E-3,1.0E-3)
+		tau.b.subject.text ~ dgamma(1.0E-3,1.0E-3)
+
+		tau.item ~  dgamma(1.0E-3,1.0E-3)
+		tau.text ~  dgamma(1.0E-3,1.0E-3)
+		tau.subject ~  dgamma(1.0E-3,1.0E-3)
+		tau.subject.text ~ dgamma(1.0E-3,1.0E-3)
+
+
+		####################################################################################
+		# Read out variables
+		for (j in 1:J) {
+			psi.beta.subject[j] <- beta.subject[j]-mean(beta.subject)
+			psi.alpha.subject[j] <- alpha.subject[j]-mean(alpha.subject)
+			}
+	
+		for (t in 1:T) {
+			psi.beta.text[t] <- beta.text[t]-mean(beta.text)
+			psi.alpha.text[t] <- alpha.text[t]-mean(alpha.text)
+			}
+
+		####################################################################################
+				
+}
