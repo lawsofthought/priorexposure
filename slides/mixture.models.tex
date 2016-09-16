@@ -1,6 +1,6 @@
 \documentclass{slides}
 
-\title[MCMC]{Mixture Models}
+\title[MCMC]{Mixture Models \& Latent Variable Models}
 \author[Andrews]{Mark Andrews \& Thom Baguley}
 
 \begin{document}
@@ -30,8 +30,9 @@
 	\item We could, however, models $y_1, y_2 \ldots y_n$ as distributed according to a finite \emph{mixture} of parametric density functions.
 		For example, 
 		\[
-			y_i \sim \sum_{k=1}^K N(\mu_k, \sigma_k) \Prob{\mu_k, \sigma_k}, \quad\text{for $i \in {1 \ldots n}$.}
+			y_i \sim \sum_{k=1}^K N(\mu_k, \sigma_k) \pi_k, \quad\text{for $i \in {1 \ldots n}$.}
 		\]
+	where $\pi_k$ is the probability of component distribution $k$.
 	
 
 	\end{itemize}
@@ -61,15 +62,15 @@
 
 	\item If $y_1, y_2 \ldots y_n$ are modelled as 
 		\[
-			y_i \sim \sum_{k=1}^K N(\mu_k, \sigma_k) \Prob{\mu_k, \sigma_k}, \quad\text{for $i \in {1 \ldots n}$,}
+			y_i \sim \sum_{k=1}^K N(\mu_k, \sigma_k) \pi_k, \quad\text{for $i \in {1 \ldots n}$.}
 		\]
-		this is equivalent to each $y_i$ corresponding to a discrete latent variable $x_i \in \{1, 2 \ldots K\}$ and
+	this is equivalent to each $y_i$ corresponding to a discrete latent variable $x_i \in \{1, 2 \ldots K\}$ and
 		\[
 			y_i \sim N(\mu_{[x_i]}, \sigma_{[x_i]}),\quad\text{for $i \in {1 \ldots n}$.}
 		\]
-		and
+		where
 		\[
-			x_i \sim P(\pi_k), \quad\text{where $\pi_k = \Prob{\mu_k, \sigma_k}$}.
+			x_i \sim P(\pi).
 		\]
 	
 	\end{itemize}
@@ -96,7 +97,7 @@
 	\begin{frame}
 	\frametitle{Bayesian inference in mixture models as latent variable models}
 	\begin{itemize}
-	\item Given the general way form
+	\item Given the general form
 		\[
 			\Prob{y_i} \sim \sum_{k=1}^K \Prob{y \given \theta, x_i=k}\Prob{x_i=k\given\pi}, \quad\text{for $i \in {1 \ldots n}$.}
 		\]
@@ -114,7 +115,7 @@
 		\item The full posterior is \[
 		\Prob{\theta, \pi, x_{1:n} \given y_{1:n}} \propto \Prob{\pi}\Prob{\theta}\prod_{i=1}^n \Prob{y \given \theta, x_i=k}\Prob{x_i=k\given\pi}
 		\]
-	\item We can often sample from this using a Gibbs sampler. For example, the conditional distributions 
+	\item We can often sample from this using a (blocked) Gibbs sampler. For example, the conditional distributions 
 		\[
 			\Prob{x_i = k \given \theta, \pi, y_{1:n}} \propto 
 			\Prob{y_i \given x_i=k, \theta}\Prob{x_i = k \given \pi}
