@@ -1,4 +1,4 @@
-Copyright 2015, 2016 by the Prior Exposure project team.
+Copyright 2015, 2016, 2017 by the Prior Exposure project team (see authors.txt).
 
 The Prior Exposure project contains programs and documents. The programs are
 contained in the sub-directory "code/" and the documents are contained in the
@@ -25,7 +25,7 @@ A copy of the GNU General Public License is provided here the text file
 License for Prior Exposure documents
 ------------------------------------
 
-For the documents in the Prior Exposure project are distributed according to Creative Commons
+The documents in the Prior Exposure project are distributed according to Creative Commons
 Attribution-ShareAlike 4.0 International Public License, see <http://creativecommons.org/licenses/by-sa/4.0/legalcode> for full details of this license.
 
 In summary, you are free to
